@@ -1,0 +1,330 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "NodeJS Grup 14 API Swagger Dökümantasyonu",
+        "description": "Öğrenci ve Bölüm CRUD işlemleri için API."
+    },
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/students": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "summary": "Tüm öğrencileri listele",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı istek",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Student"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "students"
+                ],
+                "summary": "Yeni bir öğrenci ekle",
+                "parameters": [
+                    {
+                        "name": "student",
+                        "in": "body",
+                        "description": "Eklenecek öğrenci bilgileri",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/StudentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı ekleme",
+                        "schema": {
+                            "$ref": "#/definitions/Student"
+                        }
+                    }
+                }
+            }
+        },
+        "/students/{studentId}": {
+            "get": {
+                "tags": [
+                    "students"
+                ],
+                "summary": "Öğrenci bilgisi getir",
+                "parameters": [
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "description": "Öğrenci ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı istek",
+                        "schema": {
+                            "$ref": "#/definitions/Student"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "students"
+                ],
+                "summary": "Öğrenci bilgisini güncelle",
+                "parameters": [
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "description": "Öğrenci ID",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "student",
+                        "in": "body",
+                        "description": "Güncellenecek öğrenci bilgileri",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/StudentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı güncelleme",
+                        "schema": {
+                            "$ref": "#/definitions/Student"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "students"
+                ],
+                "summary": "Öğrenciyi sil",
+                "parameters": [
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "description": "Öğrenci ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Başarılı silme"
+                    }
+                }
+            }
+        },
+        "/departments": {
+            "get": {
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Tüm bölümleri listele",
+                "responses": {
+                    "200": {
+                        "description": "Başarılı istek",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Department"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Yeni bir bölüm ekle",
+                "parameters": [
+                    {
+                        "name": "department",
+                        "in": "body",
+                        "description": "Eklenecek bölüm bilgileri",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DepartmentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı ekleme",
+                        "schema": {
+                            "$ref": "#/definitions/Department"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{departmentId}": {
+            "get": {
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Bölüm bilgisi getir",
+                "parameters": [
+                    {
+                        "name": "departmentId",
+                        "in": "path",
+                        "description": "Bölüm ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı istek",
+                        "schema": {
+                            "$ref": "#/definitions/Department"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Bölüm bilgisini güncelle",
+                "parameters": [
+                    {
+                        "name": "departmentId",
+                        "in": "path",
+                        "description": "Bölüm ID",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "department",
+                        "in": "body",
+                        "description": "Güncellenecek bölüm bilgileri",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DepartmentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Başarılı güncelleme",
+                        "schema": {
+                            "$ref": "#/definitions/Department"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Bölümü sil",
+                "parameters": [
+                    {
+                        "name": "departmentId",
+                        "in": "path",
+                        "description": "Bölüm ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Başarılı silme"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Student": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "deptid": {
+                    "type": "integer"
+                },
+                "counter": {
+                    "type": "integer"
+                }
+            }
+        },
+        "StudentInput": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "deptid": {
+                    "type": "integer"
+                },
+                "counter": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "name",
+                "email",
+                "deptid",
+                "counter"
+            ]
+        },
+        "Department": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "dept_std_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "DepartmentInput": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "dept_std_id": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "name",
+                "dept_std_id"
+            ]
+        }
+    }
+}
