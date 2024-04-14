@@ -31,13 +31,23 @@ router.get('/:id', async (req, res) => {
 
 // Yeni bir öğrenci ekle
 router.post('/', async (req, res) => {
-  const { name, email, deptid, counter } = req.body;
+  const { name, email, deptid } = req.body;
   try {
     const { rows } = await pool.query(
-      'INSERT INTO students (name, email, deptid, counter) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, email, deptid, counter]
+      'INSERT INTO students (name, email, deptid) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, deptid]
     );
-    res.status(201).json(rows[0]);
+
+    // Eğer öğrenci başarıyla eklendiyse
+    if (rows.length > 0) {
+      // Sayaç değerini güncelle
+      const { rows: updatedCounter } = await pool.query('UPDATE student_counter SET counter = counter + 1 RETURNING counter');
+      
+      // Eklenen öğrencinin bilgilerini ve güncellenmiş sayaç değerini yanıt olarak döndür
+      res.status(201).json({ student: rows[0], counter: updatedCounter[0].counter , message: 'Öğrenci başarıyla eklendi' });
+    } else {
+      res.status(500).json({ error: 'Öğrenci eklenirken bir hata oluştu' });
+    }
   } catch (error) {
     console.error('Öğrenci ekleme hatası:', error);
     res.status(500).json({ error: 'Öğrenci ekleme hatası' });
@@ -68,8 +78,15 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.query('DELETE FROM students WHERE id = $1', [id]);
-    res.json({ message: 'Öğrenci başarıyla silindi' });
+    const result = await pool.query('DELETE FROM students WHERE id = $1 RETURNING *', [id]);
+    const deletedStudent = result.rows[0];  // Silinen öğrencinin bilgileri
+    if (deletedStudent) {
+      // Sayaç değerini güncelle
+      const { rows: updatedCounter } = await pool.query('UPDATE student_counter SET counter = counter - 1 RETURNING counter');
+      res.json({ counter: updatedCounter[0].counter, message: 'Öğrenci başarıyla silindi' });
+    } else {
+      res.status(404).json({ error: 'Öğrenci bulunamadı' });
+    }
   } catch (error) {
     console.error('Öğrenci silme hatası:', error);
     res.status(500).json({ error: 'Öğrenci silme hatası' });
