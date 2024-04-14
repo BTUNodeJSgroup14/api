@@ -10,6 +10,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
+  PERIOD: process.env.PERIOD, // E-posta gönderme periyodu
 });
 
 // Veritabanı tablolarını oluşturmak için
@@ -28,6 +29,20 @@ async function createTables() {
         counter INT
       )
     `);
+
+    // Öğrenci sayaç tablosu oluştur
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS student_counter (
+        id SERIAL PRIMARY KEY,
+        counter INT DEFAULT 0
+      )
+    `);
+    
+    // Eğer student_counter tablosunda hiç veri yoksa, başlangıç sayaç değerini 0 olarak belirle
+    const result = await client.query('SELECT * FROM student_counter');
+    if (result.rowCount === 0) {
+      await client.query('INSERT INTO student_counter (counter) VALUES (0)');
+    }
 
     // Bölüm tablosu oluştur
     await client.query(`
