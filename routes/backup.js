@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { pool } = require('../db'); 
+const { pool } = require('../db');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
@@ -9,15 +9,46 @@ require('dotenv').config();
 // Periyot değişkenini .env dosyasından al
 const PERIOD = process.env.PERIOD;
 
+const transporter = nodemailer.createTransport({
+  service: 'outlook',
+  auth: {
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD
+  }
+});
+
+router.post('/mail', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    const mailOptions = {
+      from: process.env.MAIL_USERNAME,
+      to: email,
+      subject: `Merhaba ${name},`,
+      text: message
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('E-posta gönderme hatası:', error);
+        res.status(500).json({ error: 'E-posta gönderme hatası' });
+      } else {
+        console.log('E-posta gönderildi:', info.response);
+        res.json({ message: 'E-posta başarıyla gönderildi' });
+      }
+    });
+  } catch (error) {
+
+  }
+});
+
 // Haftalık yedekleme zamanlarını hesaplayacak fonksiyon
-function calculateBackupTimes(period) {  
+function calculateBackupTimes(period) {
   // Haftalık periyot için pazartesi gününü ve 09:00'u seç
   const backupTime = '0 9 * * 1'; // Dakika, saat, gün, ay, haftanın günü (0: Pazar, 1: Pazartesi, ..., 6: Cumartesi)
   return backupTime;
 }
 
 // Haftalık yedekleme zamanlarını hesapla
-const backupTime = calculateBackupTimes(PERIOD); 
+const backupTime = calculateBackupTimes(PERIOD);
 
 // Öğrenci listesini bir JSON dosyasına yaz
 async function saveStudentsToJsonFile() {
@@ -40,16 +71,7 @@ async function saveStudentsToJsonFile() {
 // E-posta göndermek için gerekli ayarları yapın
 async function sendEmail() {
   // SMTP sunucusu yapılandırması
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // TLS kullanılıyor
-    service: 'gmail',
-    auth: {
-      user: 'your-email@example.com', // E-posta adresinizi girin  
-      pass: 'your-password' // E-posta şifrenizi girin
-    }
-  });
+
 
   // E-posta içeriğini oluşturun
   const mailOptions = {
@@ -73,7 +95,7 @@ async function sendEmail() {
       console.log('E-posta gönderildi:', info.response);
     }
   });
-  
+
 }
 
 // Haftalık yedekleme işlemini zamanlayıcıya ekle rapor oluştur ve e-posta ile gönder
