@@ -6,8 +6,6 @@ const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 require('dotenv').config();
 
-const PERIOD = process.env.PERIOD;
-
 const transporter = nodemailer.createTransport({
   service: 'outlook',
   auth: {
@@ -31,13 +29,14 @@ function calculateBackupTimes(period) {
   return backupTime;
 }
 
-const backupTime = calculateBackupTimes(PERIOD);
+const backupTime = calculateBackupTimes(process.env.PERIOD);
 
 async function sendEmail() {
   try {
     const { rows: students } = await pool.query('SELECT * FROM students');
     const jsonData = JSON.stringify(students, null, 2);
     const filePath = './students.json';
+    fs.writeFileSync(filePath, jsonData, 'utf-8');
     const mailOptions = {
       from: process.env.MAIL_USERNAME,
       to: process.env.MAIL_TO,
@@ -65,7 +64,7 @@ cron.schedule(backupTime, async () => {
     console.error('Haftalık rapor oluşturma hatası:', error);
   }
 }, {
-  timezone: "Europe/Istanbul" 
+  timezone: "Europe/Istanbul"
 });
 
 module.exports = router;
