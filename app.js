@@ -2,6 +2,7 @@ const express = require('express');
 const { createTables } = require('./db');
 const studentsRouter = require('./routes/students');
 const departmentsRouter = require('./routes/departments');
+const backupRouter = require('./routes/backup');
 const app = express();
 
 const swaggerUi = require('swagger-ui-express');
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/students', studentsRouter);
 app.use('/departments', departmentsRouter);
+app.use('/backup', backupRouter);
 
 app.get('/', (req, res) => {
   res.send('Anasayfa!');
