@@ -12,13 +12,13 @@ router.get('/', async (req, res) => {
       res.status(500).json({ error: 'Departmanları getirme hatası' });
     }
   });
-
+  
 // Yeni bir departman ekle
 router.post('/', async (req, res) => {
   const { name, dept_std_id } = req.body;
   try {
     const { rows } = await pool.query(
-      'INSERT INTO departments (name, dept_std_id) VALUES ($1, $2) RETURNING *',
+      'INSERT INTO departments (name, dept_std_id, created_at, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
       [name, dept_std_id]
     );
     res.status(201).json(rows[0]);
@@ -34,7 +34,7 @@ router.put('/:id', async (req, res) => {
   const { name, dept_std_id } = req.body;
   try {
     const { rows } = await pool.query(
-      'UPDATE departments SET name = $1, dept_std_id = $2 WHERE id = $3 RETURNING *',
+      'UPDATE departments SET name = $1, dept_std_id = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *',
       [name, dept_std_id, id]
     );
     if (rows.length === 0) {
@@ -47,7 +47,6 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Departman güncelleme hatası' });
   }
 });
-
 // Belirli bir departmanı sil
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;

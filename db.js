@@ -27,6 +27,8 @@ async function createTables() {
         email VARCHAR(100),
         dept_id INT,
         counter INT
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -35,6 +37,8 @@ async function createTables() {
       CREATE TABLE IF NOT EXISTS student_counter (
         id SERIAL PRIMARY KEY,
         counter INT DEFAULT 0
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     
@@ -50,6 +54,8 @@ async function createTables() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100),
         std_id INT
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 

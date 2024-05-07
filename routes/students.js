@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
     console.error('Öğrencileri alma hatası:', error);
     res.status(500).json({ error: 'Öğrencileri alma hatası' });
   }
+  
 });
 
 // Belirli bir öğrenciyi getir
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
   const { name, email, deptid } = req.body;
   try {
     const { rows } = await pool.query(
-      'INSERT INTO students (name, email, deptid) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO students (name, email, deptid, created_at, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *',
       [name, email, deptid]
     );
 
@@ -60,7 +61,7 @@ router.put('/:id', async (req, res) => {
   const { name, email, deptid, counter } = req.body;
   try {
     const { rows } = await pool.query(
-      'UPDATE students SET name = $1, email = $2, deptid = $3, counter = $4 WHERE id = $5 RETURNING *',
+      'UPDATE students SET name = $1, email = $2, deptid = $3, counter = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *',
       [name, email, deptid, counter, id]
     );
     if (rows.length === 0) {
