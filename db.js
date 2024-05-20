@@ -1,6 +1,7 @@
+// db.js
+const db = require('./db');
 
 require('dotenv').config();
-
 const { Pool } = require('pg');
 
 // PostgreSQL bağlantı ayarlarını .env dosyasından al
@@ -12,7 +13,33 @@ const pool = new Pool({
   port: process.env.DB_PORT,
   PERIOD: process.env.PERIOD, // E-posta gönderme periyodu
 });
+async function addTimestampColumns() {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
 
+    // "students" tablosuna "created_at" ve "updated_at" sütunlarını ekle
+    await client.query(`
+      ALTER TABLE students
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+    `);
+
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = {
+  pool,
+  createTables,
+  addTimestampColumns
+
+};
 // Veritabanı tablolarını oluşturmak için
 async function createTables() {
   const client = await pool.connect();
@@ -26,7 +53,7 @@ async function createTables() {
         name VARCHAR(100),
         email VARCHAR(100),
         dept_id INT,
-        counter INT
+        counter INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -36,7 +63,7 @@ async function createTables() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS student_counter (
         id SERIAL PRIMARY KEY,
-        counter INT DEFAULT 0
+        counter INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -53,7 +80,7 @@ async function createTables() {
       CREATE TABLE IF NOT EXISTS departments (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100),
-        std_id INT
+        std_id INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -70,5 +97,6 @@ async function createTables() {
 
 module.exports = {
   pool,
-  createTables,
+  createTables ,
+  addTimestampColumns 
 };

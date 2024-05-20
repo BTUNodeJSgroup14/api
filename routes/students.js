@@ -1,6 +1,8 @@
+//student.js
 const express = require('express');
 const { pool } = require('../db'); 
 const router = express.Router();
+
 
 // Tüm öğrencileri getir
 router.get('/', async (req, res) => {
@@ -93,5 +95,7 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Öğrenci silme hatası' });
   }
 });
+
+
 
 module.exports = router;
